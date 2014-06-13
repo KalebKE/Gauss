@@ -35,11 +35,11 @@ public class SerialCom
 		final Serial serialGPS = SerialFactory.createInstance();
 
 		// Use bus number = 1 for new Raspberry Pi's (512MB with mounting holes)
-		final MCP23008GpioProvider i2c = new MCP23008GpioProvider(1, 0x40);
+		final Adafruit16PwmProvider i2c = new Adafruit16PwmProvider(1, 0x40);
 
-		i2c.setMode(MCP23008Pin.GPIO_00, PinMode.PWM_OUTPUT);
+		i2c.setMode(Adafruit16PwmPin.GPIO_00, PinMode.PWM_OUTPUT);
 
-		i2c.setPwm(MCP23008Pin.GPIO_00, 600);
+		i2c.setPwm(Adafruit16PwmPin.GPIO_00, 600);
 
 		// create and register the serial data listener
 		serialIMU.addListener(new SerialDataListener()
