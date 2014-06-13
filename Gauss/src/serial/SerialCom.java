@@ -34,8 +34,27 @@ public class SerialCom
 		final Serial serialIMU = SerialFactory.createInstance();
 		final Serial serialGPS = SerialFactory.createInstance();
 
-		// Use bus number = 1 for new Raspberry Pi's (512MB with mounting holes)
-		final Adafruit16PwmProvider i2c = new Adafruit16PwmProvider(1, 0x40);
+		AdafruitPCA9685 servoBoard = new AdafruitPCA9685();
+		servoBoard.setPWMFreq(50); // Set frequency to 60 Hz
+		int servoMin = 130; // was 150. Min pulse length out of 4096
+		int servoMax = 615; // was 600. Max pulse length out of 4096
+
+		final int CONTINUOUS_SERVO_CHANNEL = 0;
+		final int STANDARD_SERVO_CHANNEL = 1;
+
+		for (int i = 0; i < 10; i++)
+		{
+			System.out.println("i=" + i);
+			servoBoard.setPWM(STANDARD_SERVO_CHANNEL, 0, servoMin);
+			servoBoard.setPWM(CONTINUOUS_SERVO_CHANNEL, 0, servoMin);
+			servoBoard.waitfor(1000);
+			servoBoard.setPWM(STANDARD_SERVO_CHANNEL, 0, servoMax);
+			servoBoard.setPWM(CONTINUOUS_SERVO_CHANNEL, 0, servoMax);
+			servoBoard.waitfor(1000);
+		}
+		servoBoard.setPWM(CONTINUOUS_SERVO_CHANNEL, 0, 0); // Stop the
+															// continuous one
+		System.out.println("Done with the demo.");
 
 		// create and register the serial data listener
 		serialIMU.addListener(new SerialDataListener()
