@@ -2,9 +2,7 @@ package serial;
 
 import java.io.IOException;
 
-import com.pi4j.io.i2c.I2CBus;
-import com.pi4j.io.i2c.I2CDevice;
-import com.pi4j.io.i2c.I2CFactory;
+import com.pi4j.io.gpio.PinMode;
 import com.pi4j.io.serial.Serial;
 import com.pi4j.io.serial.SerialDataEvent;
 import com.pi4j.io.serial.SerialDataListener;
@@ -13,7 +11,8 @@ import com.pi4j.io.serial.SerialPortException;
 
 public class SerialCom
 {
-	public static void main(String args[]) throws InterruptedException, IOException
+	public static void main(String args[]) throws InterruptedException,
+			IOException
 	{
 
 		// !! ATTENTION !!
@@ -34,9 +33,14 @@ public class SerialCom
 		// create an instance of the serial communications class
 		final Serial serialIMU = SerialFactory.createInstance();
 		final Serial serialGPS = SerialFactory.createInstance();
-		
+
+		// Use bus number = 1 for new Raspberry Pi's (512MB with mounting holes)
 		final MCP23008GpioProvider i2c = new MCP23008GpioProvider(1, 0x40);
-		
+
+		i2c.setMode(MCP23008Pin.GPIO_00, PinMode.PWM_OUTPUT);
+
+		i2c.setPwm(MCP23008Pin.GPIO_00, 600);
+
 		// create and register the serial data listener
 		serialIMU.addListener(new SerialDataListener()
 		{
