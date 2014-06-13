@@ -37,10 +37,6 @@ public class SerialCom
 		// Use bus number = 1 for new Raspberry Pi's (512MB with mounting holes)
 		final Adafruit16PwmProvider i2c = new Adafruit16PwmProvider(1, 0x40);
 
-		i2c.setMode(Adafruit16PwmPin.GPIO_00, PinMode.PWM_OUTPUT);
-
-		i2c.setPwm(Adafruit16PwmPin.GPIO_00, 600);
-
 		// create and register the serial data listener
 		serialIMU.addListener(new SerialDataListener()
 		{
