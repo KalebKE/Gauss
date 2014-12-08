@@ -58,7 +58,7 @@ public class AdafruitPCA9685
 
 	public void setPWMFreq(int freq)
 	{
-		float prescaleval = 25000000.0f; // 25MHz
+		float prescaleval = 50000000.0f; // 50000MHz
 		prescaleval /= 4096.0; // 12-bit
 		prescaleval /= freq;
 		prescaleval -= 1.0;
@@ -124,14 +124,17 @@ public class AdafruitPCA9685
 	{
 		int pulseLength = 1000000; // 1,000,000 us per pulse. "us" is to be read
 									// "micro sec".
-		pulseLength /= 60; // 60 Hz
+		pulseLength /= 50; // 60 Hz
 		if (verbose)
 			System.out.println(pulseLength + " us per period");
 		pulseLength /= 4096; // 12 bits of resolution
 		if (verbose)
 			System.out.println(pulseLength + " us per bit");
-		pulse *= 1000;
+		//pulse *= 1000;
 		pulse /= pulseLength;
+		
+		System.out.println(pulse + " pulse");
+		
 		this.setPWM(channel, 0, pulse);
 	}
 }

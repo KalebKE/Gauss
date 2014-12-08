@@ -15,6 +15,10 @@ public class SerialCom
 			IOException
 	{
 
+	}
+
+	private void startSensorData()
+	{
 		// !! ATTENTION !!
 		// By default, the serial port is configured as a console port
 		// for interacting with the Linux OS shell. If you want to use
@@ -33,28 +37,6 @@ public class SerialCom
 		// create an instance of the serial communications class
 		final Serial serialIMU = SerialFactory.createInstance();
 		final Serial serialGPS = SerialFactory.createInstance();
-
-		AdafruitPCA9685 servoBoard = new AdafruitPCA9685();
-		servoBoard.setPWMFreq(50); // Set frequency to 60 Hz
-		int servoMin = 130; // was 150. Min pulse length out of 4096
-		int servoMax = 615; // was 600. Max pulse length out of 4096
-
-		final int CONTINUOUS_SERVO_CHANNEL = 0;
-		final int STANDARD_SERVO_CHANNEL = 1;
-
-		for (int i = 0; i < 10; i++)
-		{
-			System.out.println("i=" + i);
-			servoBoard.setPWM(STANDARD_SERVO_CHANNEL, 0, servoMin);
-			servoBoard.setPWM(CONTINUOUS_SERVO_CHANNEL, 0, servoMin);
-			servoBoard.waitfor(1000);
-			servoBoard.setPWM(STANDARD_SERVO_CHANNEL, 0, servoMax);
-			servoBoard.setPWM(CONTINUOUS_SERVO_CHANNEL, 0, servoMax);
-			servoBoard.waitfor(1000);
-		}
-		servoBoard.setPWM(CONTINUOUS_SERVO_CHANNEL, 0, 0); // Stop the
-															// continuous one
-		System.out.println("Done with the demo.");
 
 		// create and register the serial data listener
 		serialIMU.addListener(new SerialDataListener()
