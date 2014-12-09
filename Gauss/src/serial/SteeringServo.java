@@ -4,11 +4,36 @@ public class SteeringServo
 {
 	private final int STANDARD_SERVO_CHANNEL = 1;
 
+	private final int servoMin = 100;
+	private final int servoMax = 200;
+	
+	private final int servoRange = servoMax - servoMin;
+	
+	private final int servoMid = (servoMax + servoMin) / 2;
+	
+	private final int rangeDegrees = 180;
+	
+	private final double degreesPerPulse = (double)servoRange/(double)rangeDegrees;
+
 	private AdafruitPCA9685 servoBoard;
 
 	public SteeringServo()
 	{
 		initServo();
+		
+		testSteeringAngle();
+		
+		//testServo();
+	}
+
+	public void setSteeringAngle(int angle)
+	{
+		int pulse = (int) ((degreesPerPulse*angle) + servoMin);
+		
+		if(pulse <= servoMax)
+		{
+			servoBoard.setPWM(STANDARD_SERVO_CHANNEL, 0, pulse);
+		}
 	}
 
 	private void initServo()
@@ -20,14 +45,18 @@ public class SteeringServo
 		servoBoard.setPWMFreq(50);
 	}
 
+	private void testSteeringAngle()
+	{
+		setSteeringAngle(0);
+		servoBoard.waitfor(1000);
+		setSteeringAngle(180);
+		servoBoard.waitfor(1000);
+		setSteeringAngle(90);
+	}
+	
 	private void testServo()
 	{
-		int servoMin = 100; // was 150. Min pulse length out of 4096
-		int servoMax = 200; // was 600. Max pulse length out of 4096
-		int servoMid = 150;
-
 		// servoBoard.setServoPulse(STANDARD_SERVO_CHANNEL, 1500);
-
 		for (int i = 0; i < 3; i++)
 		{
 			System.out.println("i=" + i);

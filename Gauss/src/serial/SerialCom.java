@@ -14,7 +14,8 @@ public class SerialCom
 	public static void main(String args[]) throws InterruptedException,
 			IOException
 	{
-
+		SteeringServo steeringServo = new SteeringServo();
+		//EscController esc = new EscController();
 	}
 
 	private void startSensorData()
