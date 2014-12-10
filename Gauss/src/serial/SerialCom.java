@@ -15,7 +15,7 @@ public class SerialCom
 			IOException
 	{
 		SteeringServo steeringServo = new SteeringServo();
-		//EscController esc = new EscController();
+		EscController esc = new EscController();
 	}
 
 	private void startSensorData()

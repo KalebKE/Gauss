@@ -76,7 +76,7 @@ public class AdafruitPCA9685
 	{
 		// Issue #11 states that there is an overshoot of the requested
 		// frequency by a factor of 1/0.9... You can add freq = freq*0.9 to
-		// compensate if required.
+		// compensate if required. This doesn't seem to work with the PI.
 		this.freq = freq;
 
 		float prescaleval = 25000000.0f; // 25MHz
