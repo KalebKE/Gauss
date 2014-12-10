@@ -41,13 +41,14 @@ public class EscController
 		// The Traxxus servo uses a ency of 50Hz and a 180 degree rotation
 		// range with a 100 centisecond to 200 centisecond pulse range.
 		servoBoard.setPWMFreq(50);
+		
+		servoBoard.setPWM(STANDARD_SERVO_CHANNEL, 0, 9);
+		servoBoard.waitfor(190);
+		testEsc();
 	}
 
 	private void testEsc()
 	{
-		for (int i = 0; i < 100; i++)
-		{
-			setSpeed(10);
-		}
+			setSpeed(150);
 	}
 }
