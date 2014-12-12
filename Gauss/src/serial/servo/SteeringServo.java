@@ -1,4 +1,6 @@
-package serial;
+package serial.servo;
+
+import serial.AdafruitPCA9685;
 
 public class SteeringServo
 {

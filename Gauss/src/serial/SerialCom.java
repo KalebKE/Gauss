@@ -2,7 +2,10 @@ package serial;
 
 import java.io.IOException;
 
-import com.pi4j.io.gpio.PinMode;
+import serial.sensor.SensorManager;
+import serial.servo.EscController;
+import serial.servo.SteeringServo;
+
 import com.pi4j.io.serial.Serial;
 import com.pi4j.io.serial.SerialDataEvent;
 import com.pi4j.io.serial.SerialDataListener;
@@ -14,8 +17,13 @@ public class SerialCom
 	public static void main(String args[]) throws InterruptedException,
 			IOException
 	{
-		SteeringServo steeringServo = new SteeringServo();
-		EscController esc = new EscController();
+		//SteeringServo steeringServo = new SteeringServo();
+		//EscController esc = new EscController();
+		
+//		SerialCom com = new SerialCom(); 
+//		com.startSensorData();
+		
+		SensorManager sensorManager = new SensorManager();
 	}
 
 	private void startSensorData()
