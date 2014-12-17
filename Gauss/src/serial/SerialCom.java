@@ -12,6 +12,8 @@ import com.pi4j.io.serial.SerialDataListener;
 import com.pi4j.io.serial.SerialFactory;
 import com.pi4j.io.serial.SerialPortException;
 
+import controller.Controller;
+
 public class SerialCom
 {
 	public static void main(String args[]) throws InterruptedException,
@@ -23,7 +25,7 @@ public class SerialCom
 //		SerialCom com = new SerialCom(); 
 //		com.startSensorData();
 		
-		SensorManager sensorManager = new SensorManager();
+		Controller controller = new Controller();
 	}
 
 	private void startSensorData()

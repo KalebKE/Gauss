@@ -94,14 +94,14 @@ public class SensorManager
 
 	private void parseAcceleration(String data)
 	{
-		if(startTime == 0)
-		{
-			startTime = System.nanoTime();
-		}
-		
-		float hz = ((System.nanoTime() - startTime)/1000000)/count++;
-		
-		System.out.println("Hz: " + hz);
+//		if(startTime == 0)
+//		{
+//			startTime = System.nanoTime();
+//		}
+//		
+//		float hz = ((System.nanoTime() - startTime)/1000000)/count++;
+//		
+//		System.out.println("Hz: " + hz);
 		
 		data = data.replace("A-R=", "");
 
