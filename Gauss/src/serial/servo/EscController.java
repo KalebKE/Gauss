@@ -53,15 +53,17 @@ public class EscController
 		// range with a 100 centisecond to 200 centisecond pulse range.
 		servoBoard.setPWMFreq(60);
 
+		System.out.println("Turn on ESC...");
+		
 		// ESC must be plugged in within two seconds of starting the code.
 		// The ESC is looking of the neutral position, so we send it that...
 		setSpeed(50);
-		servoBoard.waitfor(2000);
+		servoBoard.waitfor(3000);
 	}
 
 	private void testEsc()
 	{
-		setSpeed(60);
+		setSpeed(55);
 		servoBoard.waitfor(5000);
 		setSpeed(50);
 	}

@@ -13,32 +13,34 @@ public class SensorManager
 {
 	// create an instance of the serial communications class
 	private final Serial serialIMU = SerialFactory.createInstance();
-	
+
 	private ArrayList<SensorEventListener> listeners;
 
 	public SensorManager()
 	{
-		 listeners = new ArrayList<SensorEventListener>();
+		listeners = new ArrayList<SensorEventListener>();
+
+		initSensors();
 	}
-	
+
 	public void registerListener(SensorEventListener listener)
 	{
 		listeners.add(listener);
 	}
-	
+
 	public void removeListener(SensorEventListener listener)
 	{
 		int i = listeners.indexOf(listener);
-		
-		if(i >= 0)
+
+		if (i >= 0)
 		{
 			listeners.remove(i);
 		}
 	}
-	
+
 	public void notifyObservers(SensorEvent event)
 	{
-		for(SensorEventListener listener: listeners)
+		for (SensorEventListener listener : listeners)
 		{
 			listener.onSensorChanged(event);
 		}
@@ -52,31 +54,101 @@ public class SensorManager
 		{
 			if (data[i].contains("A-R="))
 			{
-				data[i] = data[i].replace("A-R=", "");
+				parseAcceleration(data[i]);
+			}
 
-				String[] dataList = data[i].split(",");
-
-				double[] acceleration = new double[3];
-
-				for (int j = 0; j < dataList.length; j++)
-				{
-					// Scale our acceleration units to meters/sec
-					acceleration[j] = Double.valueOf(dataList[j]) / 24.5;
-				}
-
-				System.out.println(Arrays.toString(acceleration));
-				
-				SensorEvent event = new SensorEvent();
-				
-				event.sensor = new Sensor(Sensor.TYPE_ACCELEROMETER);
-				event.values = acceleration;
-				
-				notifyObservers(event);
+			if (data[i].contains("G-R="))
+			{
+				parseGyroscope(data[i]);
+			}
+			
+			if (data[i].contains("M-R="))
+			{
+				parseMagnetic(data[i]);
 			}
 		}
 	}
 
-	private void initAccelerationSensor()
+	private void parseAcceleration(String data)
+	{
+		data = data.replace("A-R=", "");
+
+		String[] dataList = data.split(",");
+
+		double[] acceleration = new double[3];
+
+		for (int i = 0; i < dataList.length; i++)
+		{
+			// Scale our acceleration units to meters/sec
+			acceleration[i] = Double.valueOf(dataList[i]) / 24.5;
+		}
+
+		SensorEvent event = new SensorEvent();
+
+		event.sensor = new Sensor(Sensor.TYPE_ACCELEROMETER);
+		event.values = acceleration;
+
+		notifyObservers(event);
+	}
+
+	private void parseGyroscope(String data)
+	{
+		data = data.replace("G-R=", "");
+
+		System.out.println(data);
+
+		String[] dataList = data.split(",");
+
+		double[] rotation = new double[3];
+
+		for (int i = 0; i < dataList.length; i++)
+		{
+
+			// BUGISH... randomly, a negative symbol "-" is sent without a
+			// number, so we look for this and replace it with 0.
+			dataList[i] = dataList[i].replaceAll("\\s", "");
+
+			if (!dataList[i].equals("-") && !dataList[i].equals(""))
+			{
+				rotation[i] = Double.valueOf(dataList[i]);
+			} else
+			{
+				rotation[i] = 0;
+			}
+		}
+
+		SensorEvent event = new SensorEvent();
+
+		event.sensor = new Sensor(Sensor.TYPE_GYROSCOPE);
+		event.values = rotation;
+
+		notifyObservers(event);
+	}
+	
+	private void parseMagnetic(String data)
+	{
+		data = data.replace("M-R=", "");
+
+		String[] dataList = data.split(",");
+
+		double[] magnetic = new double[3];
+
+		for (int i = 0; i < dataList.length; i++)
+		{
+			magnetic[i] = Double.valueOf(dataList[i]);
+		}
+
+		System.out.println(Arrays.toString(magnetic));
+
+		SensorEvent event = new SensorEvent();
+
+		event.sensor = new Sensor(Sensor.TYPE_MAGNETIC);
+		event.values = magnetic;
+
+		notifyObservers(event);
+	}
+
+	private void initSensors()
 	{
 		// create and register the serial data listener
 		serialIMU.addListener(new SerialDataListener()
