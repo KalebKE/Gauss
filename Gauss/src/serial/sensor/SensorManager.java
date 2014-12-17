@@ -2,6 +2,8 @@ package serial.sensor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.pi4j.io.serial.Serial;
 import com.pi4j.io.serial.SerialDataEvent;
@@ -11,14 +13,35 @@ import com.pi4j.io.serial.SerialPortException;
 
 public class SensorManager
 {
+	private double[] acceleration = new double[3];
+	private double[] magnetic = new double[3];
+	private double[] rotation = new double[3];
+	
+	private float startTime = 0;
+	
+	private int count = 1;
+	
+	private ArrayList<SensorEventListener> listeners;
+	
+	private Queue<SensorEvent> sensorEventQueue;
+	
 	// create an instance of the serial communications class
 	private final Serial serialIMU = SerialFactory.createInstance();
-
-	private ArrayList<SensorEventListener> listeners;
-
+	
+	private final Sensor accelerationSensor = new Sensor(Sensor.TYPE_ACCELEROMETER);
+	private final Sensor gyroscopeSensor = new Sensor(Sensor.TYPE_GYROSCOPE);
+	private final Sensor magneticSensor = new Sensor(Sensor.TYPE_MAGNETIC);
+	
 	public SensorManager()
 	{
 		listeners = new ArrayList<SensorEventListener>();
+		
+		sensorEventQueue = new LinkedList<SensorEvent>();
+		
+		for(int i = 0; i < 20; i++)
+		{
+			sensorEventQueue.add(new SensorEvent());
+		}
 
 		initSensors();
 	}
@@ -71,11 +94,18 @@ public class SensorManager
 
 	private void parseAcceleration(String data)
 	{
+		if(startTime == 0)
+		{
+			startTime = System.nanoTime();
+		}
+		
+		float hz = ((System.nanoTime() - startTime)/1000000)/count++;
+		
+		System.out.println("Hz: " + hz);
+		
 		data = data.replace("A-R=", "");
 
 		String[] dataList = data.split(",");
-
-		double[] acceleration = new double[3];
 
 		for (int i = 0; i < dataList.length; i++)
 		{
@@ -83,23 +113,21 @@ public class SensorManager
 			acceleration[i] = Double.valueOf(dataList[i]) / 24.5;
 		}
 
-		SensorEvent event = new SensorEvent();
-
-		event.sensor = new Sensor(Sensor.TYPE_ACCELEROMETER);
+		SensorEvent event = sensorEventQueue.remove();
+		
+		event.sensor = accelerationSensor;
 		event.values = acceleration;
 
 		notifyObservers(event);
+		
+		sensorEventQueue.add(event);
 	}
 
 	private void parseGyroscope(String data)
 	{
 		data = data.replace("G-R=", "");
 
-		System.out.println(data);
-
 		String[] dataList = data.split(",");
-
-		double[] rotation = new double[3];
 
 		for (int i = 0; i < dataList.length; i++)
 		{
@@ -117,12 +145,14 @@ public class SensorManager
 			}
 		}
 
-		SensorEvent event = new SensorEvent();
+		SensorEvent event = sensorEventQueue.remove();
 
-		event.sensor = new Sensor(Sensor.TYPE_GYROSCOPE);
+		event.sensor = gyroscopeSensor;
 		event.values = rotation;
 
 		notifyObservers(event);
+		
+		sensorEventQueue.add(event);
 	}
 	
 	private void parseMagnetic(String data)
@@ -131,21 +161,19 @@ public class SensorManager
 
 		String[] dataList = data.split(",");
 
-		double[] magnetic = new double[3];
-
 		for (int i = 0; i < dataList.length; i++)
 		{
 			magnetic[i] = Double.valueOf(dataList[i]);
 		}
 
-		System.out.println(Arrays.toString(magnetic));
+		SensorEvent event = sensorEventQueue.remove();
 
-		SensorEvent event = new SensorEvent();
-
-		event.sensor = new Sensor(Sensor.TYPE_MAGNETIC);
+		event.sensor = magneticSensor;
 		event.values = magnetic;
 
 		notifyObservers(event);
+		
+		sensorEventQueue.add(event);
 	}
 
 	private void initSensors()
